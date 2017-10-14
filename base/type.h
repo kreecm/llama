@@ -2,8 +2,9 @@
 #define LLAMA_TYPE_H
 
 #include <cstdint>
+#include <string>
 
-#include "numeric_type.h"
+#include "base/numeric_type.h"
 
 namespace llama {
 
@@ -11,8 +12,8 @@ namespace llama {
   //
   // Types are encoded into a 32-bit integer code as follows:
   //
-  //   bytes 0-3:  category
-  //   bytes 4-31: category params
+  //   bits 0-7:  category
+  //   bits 8-31: category params
   //
   // Each category defines its required params, which must fit into 28 bits and
   // specify the format of the data represented by the type.
@@ -64,6 +65,8 @@ namespace llama {
     }
 
     bool is_defined() const { return get_category() != kTypeUndefined; }
+
+    std::string get_type_name() const;
     
     // Accessors for numeric types.
     // =====================================================================
@@ -92,7 +95,10 @@ namespace llama {
   };
 
   template<typename T> type type_of();
-
+  template<typename T> std::string type_name() {
+    return type_of<T>().get_type_name();
+  }
+  
   template<> inline type type_of<std::int8_t>()  { return type::make_int(8);  }
   template<> inline type type_of<std::int16_t>() { return type::make_int(16); }
   template<> inline type type_of<std::int32_t>() { return type::make_int(32); }
@@ -107,9 +113,9 @@ namespace llama {
   template<>
   inline type type_of<std::uint64_t>() { return type::make_uint(64); }
 
-  template<> inline type type_of<float>()  { return type::make_uint(32); }
-  template<> inline type type_of<double>() { return type::make_uint(64); }
-
+  template<> inline type type_of<float>()  { return type::make_float(32); }
+  template<> inline type type_of<double>() { return type::make_float(64); }
+  
 } // namespace llama
 
 #endif // LLAMA_TYPE_H
