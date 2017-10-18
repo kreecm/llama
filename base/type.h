@@ -2,6 +2,7 @@
 #define LLAMA_TYPE_H
 
 #include <cstdint>
+#include <functional>
 #include <string>
 
 #include "base/numeric_type.h"
@@ -17,9 +18,9 @@ namespace llama {
   //
   // Each category defines its required params, which must fit into 28 bits and
   // specify the format of the data represented by the type.
-  class type {
+  class Type {
   public:
-    enum category {
+    enum Category {
       kTypeUndefined  = 0,
       kTypeNumeric    = 1,
       kTypeString     = 2,
@@ -31,90 +32,90 @@ namespace llama {
       kTypeCustom     = 8
     };
 
-    using scalar_type = numeric_type::scalar_type;
-    
+    using ScalarType = NumericType::ScalarType;
+
     // Static contructors for numeric types.
     // =====================================================================
-    static type make_numeric_type(scalar_type scalar,
-				  std::uint8_t bit_depth,
-				  std::initializer_list<std::uint8_t> dims) {
-      return type(numeric_type::encode(scalar, bit_depth, dims));
+    static Type MakeNumericType(ScalarType scalar,
+				std::uint8_t bit_depth,
+				std::initializer_list<std::uint8_t> dims) {
+      return Type(NumericType::Encode(scalar, bit_depth, dims));
     }
 
-    static type make_int(std::int8_t bit_depth) {
-      return make_numeric_type(numeric_type::kScalarInt, bit_depth, {});
+    static Type Int(std::int8_t bit_depth) {
+      return MakeNumericType(NumericType::kScalarInt, bit_depth, {});
     }
     
-    static type make_uint(std::int8_t bit_depth) {
-      return make_numeric_type(numeric_type::kScalarUInt, bit_depth, {});
+    static Type UInt(std::int8_t bit_depth) {
+      return MakeNumericType(NumericType::kScalarUInt, bit_depth, {});
     }
 
-    static type make_float(std::int8_t bit_depth) {
-      return make_numeric_type(numeric_type::kScalarFloat, bit_depth, {});
+    static Type Float(std::int8_t bit_depth) {
+      return MakeNumericType(NumericType::kScalarFloat, bit_depth, {});
     }
     
-    static type make_vector(type scalar, std::uint8_t dim);
+    static Type Vector(Type scalar, std::uint8_t dim);
     
-    static type make_matrix(type scalar, std::uint8_t row_dim,
-			    std::uint8_t col_dim);
+    static Type Matrix(Type scalar, std::uint8_t row_dim,
+		       std::uint8_t col_dim);
 
     // Accessors for all types.
     // =====================================================================
-    category get_category() const {
-      return static_cast<category>(m_code & kMaskCategory);
+    Category GetCategory() const {
+      return static_cast<Category>(m_code & kMaskCategory);
     }
 
-    bool is_defined() const { return get_category() != kTypeUndefined; }
+    bool IsDefined() const { return GetCategory() != kTypeUndefined; }
 
-    std::string get_type_name() const;
+    std::string GetName() const;
     
     // Accessors for numeric types.
     // =====================================================================
-    bool is_numeric() const { return get_category() == kTypeNumeric; }
+    bool IsNumeric() const { return GetCategory() == kTypeNumeric; }
 
-    bool is_scalar() const {
-      return is_numeric() && numeric_type::get_rank(m_code) == 0;
+    bool IsScalar() const {
+      return IsNumeric() && NumericType::GetRank(m_code) == 0;
     }
 
-    scalar_type get_scalar_type() const {
-      assert(is_numeric());
-      return numeric_type::get_scalar_type(m_code);
+    ScalarType GetScalarType() const {
+      assert(IsNumeric());
+      return NumericType::GetScalarType(m_code);
     }
 
-    std::uint8_t get_bit_depth() const {
-      assert(is_numeric());
-      return numeric_type::get_bit_depth(m_code);
+    std::uint8_t GetBitDepth() const {
+      assert(IsNumeric());
+      return NumericType::GetBitDepth(m_code);
     }
     
   private:
     static constexpr std::uint32_t kMaskCategory = 0xf;
 
-    type(std::uint32_t code) : m_code(code) {}
+    Type(std::uint32_t code) : m_code(code) {}
     
     std::uint32_t m_code;
   };
 
-  template<typename T> type type_of();
-  template<typename T> std::string type_name() {
-    return type_of<T>().get_type_name();
+  template<typename T> Type TypeOf();
+  template<typename T> std::string TypeName() {
+    return TypeOf<T>().GetName();
   }
   
-  template<> inline type type_of<std::int8_t>()  { return type::make_int(8);  }
-  template<> inline type type_of<std::int16_t>() { return type::make_int(16); }
-  template<> inline type type_of<std::int32_t>() { return type::make_int(32); }
-  template<> inline type type_of<std::int64_t>() { return type::make_int(64); }
+  template<> inline Type TypeOf<std::int8_t>()  { return Type::Int(8);  }
+  template<> inline Type TypeOf<std::int16_t>() { return Type::Int(16); }
+  template<> inline Type TypeOf<std::int32_t>() { return Type::Int(32); }
+  template<> inline Type TypeOf<std::int64_t>() { return Type::Int(64); }
 
   template<>
-  inline type type_of<std::uint8_t>()  { return type::make_uint(8);  }
+  inline Type TypeOf<std::uint8_t>()  { return Type::UInt(8);  }
   template<>
-  inline type type_of<std::uint16_t>() { return type::make_uint(16); }
+  inline Type TypeOf<std::uint16_t>() { return Type::UInt(16); }
   template<>
-  inline type type_of<std::uint32_t>() { return type::make_uint(32); }
+  inline Type TypeOf<std::uint32_t>() { return Type::UInt(32); }
   template<>
-  inline type type_of<std::uint64_t>() { return type::make_uint(64); }
+  inline Type TypeOf<std::uint64_t>() { return Type::UInt(64); }
 
-  template<> inline type type_of<float>()  { return type::make_float(32); }
-  template<> inline type type_of<double>() { return type::make_float(64); }
+  template<> inline Type TypeOf<float>()  { return Type::Float(32); }
+  template<> inline Type TypeOf<double>() { return Type::Float(64); }
   
 } // namespace llama
 

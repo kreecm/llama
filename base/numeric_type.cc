@@ -19,28 +19,28 @@ namespace llama {
 
   }  // namespace
   
-  constexpr std::uint32_t numeric_type::kShiftScalar;
-  constexpr std::uint32_t numeric_type::kShiftRank;
-  constexpr std::uint32_t numeric_type::kShiftBitDepth;
-  constexpr std::uint32_t numeric_type::kShiftRowDim;
-  constexpr std::uint32_t numeric_type::kShiftColDim;
+  constexpr std::uint32_t NumericType::kShiftScalar;
+  constexpr std::uint32_t NumericType::kShiftRank;
+  constexpr std::uint32_t NumericType::kShiftBitDepth;
+  constexpr std::uint32_t NumericType::kShiftRowDim;
+  constexpr std::uint32_t NumericType::kShiftColDim;
   
-  constexpr std::uint32_t numeric_type::kMaskScalar;
-  constexpr std::uint32_t numeric_type::kMaskRank;
-  constexpr std::uint32_t numeric_type::kMaskBitDepth;
-  constexpr std::uint32_t numeric_type::kMaskRowDim;
-  constexpr std::uint32_t numeric_type::kMaskColDim;
+  constexpr std::uint32_t NumericType::kMaskScalar;
+  constexpr std::uint32_t NumericType::kMaskRank;
+  constexpr std::uint32_t NumericType::kMaskBitDepth;
+  constexpr std::uint32_t NumericType::kMaskRowDim;
+  constexpr std::uint32_t NumericType::kMaskColDim;
 
-  std::uint32_t numeric_type::encode(scalar_type scalar,
-				     std::uint8_t bit_depth,
-				     std::initializer_list<std::uint8_t> dims) {
+  std::uint32_t NumericType::Encode(ScalarType scalar,
+				    std::uint8_t bit_depth,
+				    std::initializer_list<std::uint8_t> dims) {
     // TODO(kree): Make these compile-time checks.
-    assert(validate_bit_depth(scalar, bit_depth));
+    assert(ValidateBitDepth(scalar, bit_depth));
     assert(dims.size() < 3);
 
     std::uint8_t rank = dims.size();
-    std::uint8_t bits = encode_bit_depth(bit_depth);
-    std::int32_t code = type::kTypeNumeric;
+    std::uint8_t bits = EncodeBitDepth(bit_depth);
+    std::int32_t code = Type::kTypeNumeric;
     code |= scalar << kShiftScalar;
     code |= rank   << kShiftRank;
     code |= bits   << kShiftBitDepth;
@@ -53,27 +53,27 @@ namespace llama {
     return code;
   };
 
-  std::string numeric_type::get_type_name(std::uint32_t code) {
-    scalar_type scalar = get_scalar_type(code);
-    std::uint8_t rank  = get_rank(code);
-    std::uint8_t depth = get_bit_depth(code);
+  std::string NumericType::GetName(std::uint32_t code) {
+    ScalarType scalar  = GetScalarType(code);
+    std::uint8_t rank  = GetRank(code);
+    std::uint8_t depth = GetBitDepth(code);
 
     std::ostringstream sout;
-    sout << scalar_type_name(scalar) << static_cast<int>(depth);
+    sout << ScalarTypeName(scalar) << static_cast<int>(depth);
     if (rank > 0) {
-      std::uint8_t dim1 = get_row_dim(code);
-      sout << "_" << rank_name(rank) << static_cast<int>(dim1);
+      std::uint8_t dim1 = GetRowDim(code);
+      sout << "_" << RankName(rank) << static_cast<int>(dim1);
       if (rank > 1) {
-	std::uint8_t dim2 = get_col_dim(code);
+	std::uint8_t dim2 = GetColDim(code);
 	sout << "x" << static_cast<int>(dim2);
       }
     }
     return sout.str();
   }
 
-  bool numeric_type::validate_bit_depth(scalar_type scalar,
-					std::uint8_t bit_depth) {
-    if (!is_power_of_two(bit_depth)) {
+  bool NumericType::ValidateBitDepth(ScalarType scalar,
+				     std::uint8_t bit_depth) {
+    if (!IsPowerOfTwo(bit_depth)) {
       return false;
     } else if (scalar == kScalarFloat) {
       return 32 <= bit_depth && bit_depth <= 64;
@@ -82,7 +82,7 @@ namespace llama {
     }
   }
 
-  std::uint8_t numeric_type::encode_bit_depth(std::uint8_t bit_depth) {
+  std::uint8_t NumericType::EncodeBitDepth(std::uint8_t bit_depth) {
     std::uint8_t code;
     for (code = 0; bit_depth > 0; ++code) {
       bit_depth = bit_depth >> 1;
@@ -90,11 +90,11 @@ namespace llama {
     return code - 4;
   }
   
-  std::uint8_t numeric_type::decode_bit_depth(std::uint8_t code) {
+  std::uint8_t NumericType::DecodeBitDepth(std::uint8_t code) {
     return 1 << (code + 3);
   } 
 
-  std::string numeric_type::scalar_type_name(scalar_type scalar) {
+  std::string NumericType::ScalarTypeName(ScalarType scalar) {
     switch (scalar) {
     case kScalarInt:   return kScalarIntName;
     case kScalarUInt:  return kScalarUIntName;
@@ -103,7 +103,7 @@ namespace llama {
     return kUnknownName;
   }
 
-  std::string numeric_type::rank_name(std::uint8_t rank) {
+  std::string NumericType::RankName(std::uint8_t rank) {
     switch (rank) {
     case 0: return kRankZeroName;
     case 1: return kRankOneName;

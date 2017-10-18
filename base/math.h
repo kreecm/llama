@@ -8,12 +8,12 @@ namespace llama {
   template<typename T>
   inline constexpr
   typename std::enable_if<std::is_integral<T>::value, bool>::type
-  is_power_of_two(T n) {
+  IsPowerOfTwo(T n) {
     return
-      (n < 0) ? is_power_of_two(-n)
+      (n < 0) ? IsPowerOfTwo(-n)
       : (n < 3 ? true
       : ((n % 2) == 1 ? false
-      : is_power_of_two(n >> 1)));
+      : IsPowerOfTwo(n >> 1)));
   }
   
 }  // namespace llama

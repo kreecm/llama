@@ -9,29 +9,29 @@ namespace llama {
 
   }  // namespace
   
-  constexpr std::uint32_t type::kMaskCategory;
+  constexpr std::uint32_t Type::kMaskCategory;
   
-  type type::make_vector(type scalar, std::uint8_t dim) {
-    assert(scalar.is_scalar());
-    return type(numeric_type::encode(scalar.get_scalar_type(),
-				     scalar.get_bit_depth(),
-				     {dim}));
+  Type Type::Vector(Type scalar, std::uint8_t dim) {
+    assert(scalar.IsScalar());
+    return Type(NumericType::Encode(scalar.GetScalarType(),
+				    scalar.GetBitDepth(),
+				    {dim}));
   }
 
-  type type::make_matrix(type scalar, std::uint8_t row_dim,
-			 std::uint8_t col_dim) {
-    assert(scalar.is_scalar());
-    return type(numeric_type::encode(scalar.get_scalar_type(),
-				     scalar.get_bit_depth(),
-				     {row_dim, col_dim}));
+  Type Type::Matrix(Type scalar, std::uint8_t row_dim,
+		    std::uint8_t col_dim) {
+    assert(scalar.IsScalar());
+    return Type(NumericType::Encode(scalar.GetScalarType(),
+				    scalar.GetBitDepth(),
+				    {row_dim, col_dim}));
   }
 
-  std::string type::get_type_name() const {
-    switch (get_category()) {
+  std::string Type::GetName() const {
+    switch (GetCategory()) {
     case kTypeUndefined:
       return kUnknownTypeName;
     case kTypeNumeric:
-      return numeric_type::get_type_name(m_code);
+      return NumericType::GetName(m_code);
     case kTypeString:
       break;
     case kTypeEnum:

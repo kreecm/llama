@@ -8,12 +8,12 @@ namespace llama {
     static const std::uint8_t bad_bit_depths[] = {2, 4, 5, 31, 127, 128};
 
     for (std::uint8_t bit_depth : int_bit_depths) {
-      type int_type = type::make_int(bit_depth);
-      EXPECT_TRUE(int_type.is_defined());
-      EXPECT_TRUE(int_type.is_numeric());
-      EXPECT_TRUE(int_type.is_scalar());
-      EXPECT_EQ(numeric_type::kScalarInt, int_type.get_scalar_type());
-      EXPECT_EQ(bit_depth, int_type.get_bit_depth());
+      Type int_type = Type::Int(bit_depth);
+      EXPECT_TRUE(int_type.IsDefined());
+      EXPECT_TRUE(int_type.IsNumeric());
+      EXPECT_TRUE(int_type.IsScalar());
+      EXPECT_EQ(NumericType::kScalarInt, int_type.GetScalarType());
+      EXPECT_EQ(bit_depth, int_type.GetBitDepth());
     }
 
     for (std::uint8_t bit_depth : bad_bit_depths) {
@@ -22,17 +22,17 @@ namespace llama {
   }
 
   TEST(NumericTypeTest, TestTypeName) {
-    EXPECT_EQ("int8",  type_name<std::int8_t>());
-    EXPECT_EQ("int16", type_name<std::int16_t>());
-    EXPECT_EQ("int32", type_name<std::int32_t>());
-    EXPECT_EQ("int64", type_name<std::int64_t>());
+    EXPECT_EQ("int8",  TypeName<std::int8_t>());
+    EXPECT_EQ("int16", TypeName<std::int16_t>());
+    EXPECT_EQ("int32", TypeName<std::int32_t>());
+    EXPECT_EQ("int64", TypeName<std::int64_t>());
 
-    EXPECT_EQ("uint8",  type_name<std::uint8_t>());
-    EXPECT_EQ("uint16", type_name<std::uint16_t>());
-    EXPECT_EQ("uint32", type_name<std::uint32_t>());
-    EXPECT_EQ("uint64", type_name<std::uint64_t>());
+    EXPECT_EQ("uint8",  TypeName<std::uint8_t>());
+    EXPECT_EQ("uint16", TypeName<std::uint16_t>());
+    EXPECT_EQ("uint32", TypeName<std::uint32_t>());
+    EXPECT_EQ("uint64", TypeName<std::uint64_t>());
 
-    EXPECT_EQ("float32", type_name<float>());
-    EXPECT_EQ("float64", type_name<double>());
+    EXPECT_EQ("float32", TypeName<float>());
+    EXPECT_EQ("float64", TypeName<double>());
   }
 }
