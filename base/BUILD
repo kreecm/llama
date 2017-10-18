@@ -2,6 +2,7 @@ cc_library(
     name = "base",
     deps = [
         ":type",
+	":value",
     ],
 )
 
@@ -17,7 +18,21 @@ cc_library(
         "type.cc",
     ],
 )
-        
+
+
+cc_library(
+    name = "value",
+    hdrs = [
+        "value.h",
+    ],
+    srcs = [
+        "value.cc",
+    ],
+    deps = [
+    	":type",
+    ]
+)
+
 cc_test(
     name = "numeric_type_test",
     srcs = ["numeric_type_test.cc"],
