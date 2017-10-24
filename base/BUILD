@@ -7,15 +7,22 @@ cc_library(
 )
 
 cc_library(
+    name = "math",
+    hdrs = ["math.h"],
+)
+
+cc_library(
     name = "type",
     hdrs = [
-        "math.h",
         "numeric_type.h",
         "type.h",
     ],
     srcs = [
         "numeric_type.cc",
         "type.cc",
+    ],
+    deps = [
+        ":math",
     ],
 )
 
@@ -31,6 +38,16 @@ cc_library(
     deps = [
     	":type",
     ]
+)
+
+cc_test(
+    name = "math_test",
+    srcs = ["math_test.cc"],
+    deps = [
+        ":math",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
 )
 
 cc_test(
