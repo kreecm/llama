@@ -4,9 +4,7 @@
 namespace llama {
 
   TEST(NumericTypeTest, TestIntTypeParams) {
-    static const std::uint8_t int_bit_depths[] = {8, 16, 32, 64};
-    static const std::uint8_t bad_bit_depths[] = {2, 4, 5, 31, 127, 128};
-
+    constexpr std::uint8_t int_bit_depths[] = {8, 16, 32, 64};
     for (std::uint8_t bit_depth : int_bit_depths) {
       Type int_type = Type::Int(bit_depth);
       EXPECT_TRUE(int_type.IsDefined());
@@ -16,9 +14,10 @@ namespace llama {
       EXPECT_EQ(bit_depth, int_type.GetBitDepth());
     }
 
-    for (std::uint8_t bit_depth : bad_bit_depths) {
-      // TODO(kree): Test behavior of bad bit depths.
-    }
+    // TODO(kree): Test behavior of bad bit depths.
+    // constexpr std::uint8_t bad_bit_depths[] = {2, 4, 5, 31, 127, 128};
+    // for (std::uint8_t bit_depth : bad_bit_depths) {
+    // }
   }
 
   TEST(NumericTypeTest, TestTypeName) {
