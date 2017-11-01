@@ -7,22 +7,22 @@
 
 namespace llama {
 
-  class Value {
-  public:
-    Value(Type t);
-    
-  private:
-    static constexpr int kInPlaceSize = sizeof(std::string);
+class Value {
+ public:
+  Value(Type t);
 
-    Type m_type;
-    bool m_in_place_data;
-    
-    union m_data {
-      uint8_t in_place[kInPlaceSize];
-      void* ptr;
-    };
+ private:
+  static constexpr int kInPlaceSize = sizeof(std::string);
+
+  Type m_type;
+  bool m_in_place_data;
+
+  union m_data {
+    uint8_t in_place[kInPlaceSize];
+    void* ptr;
   };
-
 };
+
+}  // namespace llama
 
 #endif  // LLAMA_VALUE_H

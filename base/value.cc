@@ -2,6 +2,6 @@
 
 namespace llama {
 
-  Value::Value(Type t) : m_type(t) {}
+Value::Value(Type t) : m_type(t) {}
 
-}
+}  // namespace llama

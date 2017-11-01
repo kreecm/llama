@@ -3,31 +3,28 @@
 #include "base/type.h"
 
 namespace llama {
-  namespace {
-    
-    constexpr char kUnknownTypeName[] = "unknown";
+namespace {
 
-  }  // namespace
-  
-  constexpr std::uint32_t Type::kMaskCategory;
-  
-  Type Type::Vector(Type scalar, std::uint8_t dim) {
-    assert(scalar.IsScalar());
-    return Type(NumericType::Encode(scalar.GetScalarType(),
-				    scalar.GetBitDepth(),
-				    {dim}));
-  }
+constexpr char kUnknownTypeName[] = "unknown";
 
-  Type Type::Matrix(Type scalar, std::uint8_t row_dim,
-		    std::uint8_t col_dim) {
-    assert(scalar.IsScalar());
-    return Type(NumericType::Encode(scalar.GetScalarType(),
-				    scalar.GetBitDepth(),
-				    {row_dim, col_dim}));
-  }
+}  // namespace
 
-  std::string Type::GetName() const {
-    switch (GetCategory()) {
+constexpr std::uint32_t Type::kMaskCategory;
+
+Type Type::Vector(Type scalar, std::uint8_t dim) {
+  assert(scalar.IsScalar());
+  return Type(
+      NumericType::Encode(scalar.GetScalarType(), scalar.GetBitDepth(), {dim}));
+}
+
+Type Type::Matrix(Type scalar, std::uint8_t row_dim, std::uint8_t col_dim) {
+  assert(scalar.IsScalar());
+  return Type(NumericType::Encode(scalar.GetScalarType(), scalar.GetBitDepth(),
+                                  {row_dim, col_dim}));
+}
+
+std::string Type::GetName() const {
+  switch (GetCategory()) {
     case kTypeUndefined:
       return kUnknownTypeName;
     case kTypeNumeric:
@@ -46,9 +43,8 @@ namespace llama {
       break;
     case kTypeCustom:
       break;
-    }
-    return kUnknownTypeName;
   }
+  return kUnknownTypeName;
+}
 
 }  // namespace llama
-
