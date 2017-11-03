@@ -1,5 +1,5 @@
-#ifndef LLAMA_STATIC_MATH_H
-#define LLAMA_STATIC_MATH_H
+#ifndef LLAMA_MATH_H
+#define LLAMA_MATH_H
 
 #include <type_traits>
 
@@ -18,4 +18,4 @@ namespace llama {
   
 }  // namespace llama
 
-#endif // LLAMA_STATIC_MATH_H
+#endif // LLAMA_MATH_H

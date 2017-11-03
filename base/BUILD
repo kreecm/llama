@@ -6,6 +6,25 @@ cc_library(
     ],
 )
 
+#
+# Libraries
+# =============================================================================
+
+cc_library(
+    name = "error",
+    hdrs = [
+        "error.h",
+        "error_code.h",
+        "error_handler.h",
+        "error_status.h",
+    ],
+    srcs = [
+        "error_code.cc",
+        "error_handler.cc",
+        "error_status.cc",
+    ],
+)
+
 cc_library(
     name = "math",
     hdrs = ["math.h"],
@@ -22,6 +41,7 @@ cc_library(
         "type.cc",
     ],
     deps = [
+        ":error",
         ":math",
     ],
 )
@@ -38,6 +58,30 @@ cc_library(
     deps = [
     	":type",
     ]
+)
+
+#
+# Tests
+# =============================================================================
+
+cc_test(
+    name = "error_code_test",
+    srcs = ["error_code_test.cc"],
+    deps = [
+        ":error",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "error_status_test",
+    srcs = ["error_status_test.cc"],
+    deps = [
+        ":error",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
 )
 
 cc_test(
