@@ -9,6 +9,7 @@ void ExpectErrorCodeName(const std::string &code_name,
                          const std::string &error) {
   std::ostringstream sout;
   sout << "ERROR[" << code_name << "]";
+  EXPECT_EQ(sout.str(), error);
 }
 
 TEST(ErrorCodeTest, TestErrorCodes) {
