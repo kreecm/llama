@@ -103,3 +103,13 @@ cc_test(
         "@googletest//:gtest_main",
     ],
 )
+
+cc_test(
+    name = "value_test",
+    srcs = ["value_test.cc"],
+    deps = [
+        ":value",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)

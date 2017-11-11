@@ -7,6 +7,7 @@ const std::vector<ErrorCode>& GetErrorCodes() {
     kSuccess,
     kErrorUnknown,
     kErrorFailedPrecondition,
+    kErrorUnimplemented,
   };
   return kErrorCodes;
 }
@@ -19,6 +20,8 @@ std::string ErrorCodeToString(ErrorCode code) {
       return "ERROR[Unknown]";
     case kErrorFailedPrecondition:
       return "ERROR[Failed Precondition]";
+    case kErrorUnimplemented:
+      return "ERROR[Unimplemented]";
   }
   return "";
 }

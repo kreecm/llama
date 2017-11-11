@@ -22,7 +22,7 @@ TEST(ErrorCodeTest, TestErrorCodes) {
 
 TEST(ErrorCodeTest, TestErrorCodeString) {
   static const std::vector<std::string> code_names = {
-      "", "Unknown", "Failed Precondition",
+    "", "Unknown", "Failed Precondition", "Unimplemented",
   };
 
   const auto &codes = GetErrorCodes();
