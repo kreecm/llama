@@ -51,9 +51,12 @@ cc_library(
     name = "value",
     hdrs = [
         "value.h",
+        "value_base.h",
+        "value_ptr.h",
     ],
     srcs = [
         "value.cc",
+        "value_base.cc",
     ],
     deps = [
     	":type",

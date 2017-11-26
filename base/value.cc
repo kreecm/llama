@@ -1,51 +1,55 @@
 #include "base/value.h"
 
 namespace llama {
-namespace {
 
-void DeleteValue(Value* value) {
-  ErrorStatus status = Value::Free(value);
-  Assert(!status.IsError(), "Failed to free value: " + status.GetMessage());
-}
+constexpr size_t Value::kInPlaceValueSize = sizeof(std::string);
 
-}
-
-ErrorStatus Value::Allocate(Type type, Ptr* value) {
-  size_t mem_size = sizeof(Type) + type.GetSize();
-  void* mem = malloc(mem_size);
-  Value* new_value = new (mem) Value(type);
-  ErrorStatus status = new_value->Initialize();
-  if (status.IsError()) {
-    free(mem);
-    return status;
+const void* Value::GetDataPtr() const final {
+  if (IsInPlace()) {
+    return reinterpret_cast<const void*>(m_data.in_place);
+  } else {
+    return m_data.ptr;
   }
-  *value = Ptr(new_value, DeleteValue);
-  return Success();
 }
 
-ErrorStatus Value::Free(Value* value) {
-  auto finalize = value->GetType().GetFinalizer();
-  RETURN_IF_ERROR(finalize(value->GetDataPtr()));
-  void* mem = reinterpret_cast<void*>(value);
-  free(mem);
-  return Success();
+void* Value::GetMutableDataPtr() final {
+  if (IsInPlace()) {
+    return reinterpret_cast<void*>(m_data.in_place);
+  } else {
+    return m_data.ptr;
+  }
 }
 
-ErrorStatus Value::Initialize() {
-  auto initialize = m_type.GetInitializer();
-  return initialize(GetDataPtr());
+bool Value::IsInPlace() const {
+  return GetType().GetSize() <= kInPlaceValueSize;
 }
 
-void* Value::GetDataPtr() {
-  uint8_t* ptr = reinterpret_cast<uint8_t*>(this);
-  ptr += sizeof(Type);
-  return reinterpret_cast<void*>(ptr);
+void Value::Initialize() {
+  if (!IsInPlace()) {
+    m_data.ptr = malloc(GetType().GetSize());
+  }
+
+  auto init = GetType().GetInitializer();
+  init(GetMutableDataPtr());
 }
 
-const void* Value::GetConstDataPtr() const {
-  const uint8_t* ptr = reinterpret_cast<const uint8_t*>(this);
-  ptr += sizeof(Type);
-  return reinterpret_cast<const void*>(ptr);
+void Value::Move(Value&& value) {
+  auto move = GetType().GetMover();
+  move(value.GetMutableDataPtr(), GetMutableDataPtr());
+}
+
+void Value::Copy(const Value& value) {
+  auto copy = GetType().GetCopier();
+  copy(value.GetDataPtr(), GetMutableDataPtr());
+}
+
+void Value::Delete() {
+  auto finish = GetType().GetFinalizer();
+  finish(GetMutableDataPtr());
+
+  if (!IsInPlace()) {
+    free(m_data.ptr);
+  }
 }
 
 }  // namespace llama

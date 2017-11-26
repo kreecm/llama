@@ -5,51 +5,61 @@
 #include <memory>
 #include <string>
 
-#include "base/error.h"
-#include "base/type.h"
+#include "base/value_base.h"
 
 namespace llama {
 
-class Value {
+class Value : public MutablValueBase {
  public:
-  using Deleter = std::function<void (Value*)>;
-  using Ptr = std::unique_ptr<Value, Deleter>;
+  static constexpr size_t kInPlaceValueSize;
 
-  static ErrorStatus Allocate(Type type, Ptr* value);
-  static ErrorStatus Free(Value* value);
+  // Construct an invalid value.
+  Value() {}
+
+  // Construct a value of type t.
+  Value(Type t) : MutableValueBase(t) { Initialize(); }
 
   template <class T>
-  static ErrorStatus Allocate(Ptr* value) {
-    return Allocate(TypeOf<T>(), value);
+  Value() : Value(TypeOf<T>()) {}
+
+  // Move constructor.
+  Value(Value&& value) : Value(value.GetType()) { Move(value); }
+
+
+  // Copy constructor.
+  Value(const Value& value) : Value(value.GetType()) { Copy(value); }
+
+  ~Value() { Delete(); }
+
+  const void* GetDataPtr() const final;
+
+  void* GetMutableDataPtr() final;
+
+  Value& operator= (Value&& value) {
+    Move(value);
+    return *this;
   }
 
-  Type GetType() const { return m_type; }
-
-  template <class T>
-  const T& GetData() const {
-    Assert(TypeOf<T>() == m_type,
-           "Attempting to access value data as " + TypeName<T>() +
-               ", but value holds data of type " + m_type.GetName());
-    return *reinterpret_cast<const T*>(GetConstDataPtr());
-  }
-
-  template <class T>
-  T* GetMutableData() {
-    Assert(TypeOf<T>() == m_type,
-           "Attempting to access value data as " + TypeName<T>() +
-               ", but value holds data of type " + m_type.GetName());
-    return reinterpret_cast<T*>(GetDataPtr());
+  Value& operator= (const Value& value) {
+    Copy(value);
+    return *this;
   }
 
  private:
-  Value(Type t) : m_type(t) {}
+  bool IsInPlace() const;
 
-  ErrorStatus Initialize();
+  void Initialize();
 
-  void* GetDataPtr();
-  const void* GetConstDataPtr() const;
+  void Move(Value&& value);
 
-  Type m_type;
+  void Copy(const Value& value);
+
+  void Delete();
+
+  union {
+    uint8_t in_place[kInPlaceValueSize];
+    void*   ptr;
+  } m_data;
 };
 
 }  // namespace llama

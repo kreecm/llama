@@ -34,6 +34,8 @@ class Type {
   };
 
   using Initializer = std::function<ErrorStatus (void*)>;
+  using Copier = std::function<ErrorStatus (const void*, void*)>;
+  using Mover = std::function<ErrorStatus (void*, void*)>;
   using Finalizer = std::function<ErrorStatus (void*)>;
   using ScalarType = NumericType::ScalarType;
 
@@ -73,6 +75,10 @@ class Type {
   std::string GetName() const;
 
   Initializer GetInitializer() const;
+
+  Copier GetCopier() const;
+
+  Mover GetMover() const;
 
   Finalizer GetFinalizer() const;
 
