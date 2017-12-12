@@ -5,11 +5,13 @@
 
 namespace llama {
 
+class MutableValuePtr;
+
 class ValuePtr : public ValueBase {
  public:
   ValuePtr() : m_ptr(nullptr) {}
 
-  ValuePtr(const Value* value)
+  ValuePtr(const ValueBase* value)
       : ValueBase(value->GetType()),
         m_ptr(value->GeDataPtr()) {}
 
@@ -17,6 +19,8 @@ class ValuePtr : public ValueBase {
   ValuePtr(const T* value)
       : ValueBase(TypeOf<T>())
         m_ptr(reinterpret_cast<const void*>(value)) {}
+
+  ValuePtr(const MutableValuePtr& mutable_ptr);
 
   const void* GetDataPtr() const final { return m_ptr; }
 
@@ -44,6 +48,9 @@ class MutableValuePtr : public MutableValueBase {
  private:
   void* m_ptr;
 };
+
+ValuePtr::ValuePtr(const MutableValuePtr& mutable_ptr)
+    : ValuePtr(&mutable_ptr) {}
 
 }  // namespace llama
 

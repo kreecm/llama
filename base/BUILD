@@ -115,3 +115,13 @@ cc_test(
         "@googletest//:gtest_main",
     ],
 )
+
+cc_test(
+    name = "value_ptr_test",
+    srcs = ["value_ptr_test.cc"],
+    deps = [
+        ":value",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
