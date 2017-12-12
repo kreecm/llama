@@ -17,7 +17,7 @@ class Value : public MutableValueBase {
   Value() {}
 
   // Construct a value of type t.
-  Value(Type t) : MutableValueBase(t) { Initialize(); }
+  explicit Value(Type t) : MutableValueBase(t) { Initialize(); }
 
   // Move constructor.
   Value(Value&& value) : Value(value.GetType()) { Move(std::move(value)); }

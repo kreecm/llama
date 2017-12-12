@@ -76,7 +76,10 @@ Type::Initializer Type::GetInitializer() const {
   switch (GetCategory()) {
     case kTypeUndefined:
     case kTypeNumeric:
-      return [](void* mem) { return Success(); };
+      return [this](void* mem) {
+        std::memset(mem, 0, this->GetSize());
+        return Success();
+      };
     case kTypeString:
       break;
     case kTypeEnum:
@@ -92,18 +95,16 @@ Type::Initializer Type::GetInitializer() const {
     case kTypeCustom:
       break;
   }
-  return [this](void* mem) {
-    return UnimplementedError("GetInitializer is not implemented for type " +
-                              GetName());
-  };
+  std::cerr <<"GetInitializer is not implemented for type " << GetName();
+  return Initializer();
 }
 
 Type::Copier Type::GetCopier() const {
   switch (GetCategory()) {
     case kTypeUndefined:
     case kTypeNumeric:
-      return [](const void* src, void* dst) {
-        std::memcpy(dst, src, GetSize());
+      return [this](const void* src, void* dst) {
+        std::memcpy(dst, src, this->GetSize());
         return Success();
       };
     case kTypeString:
@@ -121,17 +122,16 @@ Type::Copier Type::GetCopier() const {
     case kTypeCustom:
       break;
   }
-  return [this](void* mem) {
-    return UnimplementedError("GetInitializer is not implemented for type " +
-                              GetName());
-  };
+  std::cerr << "GetCopier is not implemented for type " << GetName();
+  return Copier();
 }
 
 Type::Mover Type::GetMover() const {
   switch (GetCategory()) {
     case kTypeUndefined:
     case kTypeNumeric:
-      return [](void* src, void* dst) {
+      return [this](const void* src, void* dst) {
+        std::memcpy(dst, src, this->GetSize());
         return Success();
       };
     case kTypeString:
@@ -149,10 +149,8 @@ Type::Mover Type::GetMover() const {
     case kTypeCustom:
       break;
   }
-  return [this](void* mem) {
-    return UnimplementedError("GetInitializer is not implemented for type " +
-                              GetName());
-  };
+  std::cerr << "GetMover is not implemented for type " << GetName();
+  return Mover();
 }
 
 Type::Finalizer Type::GetFinalizer() const {
@@ -175,10 +173,8 @@ Type::Finalizer Type::GetFinalizer() const {
     case kTypeCustom:
       break;
   }
-  return [this](void* mem) {
-    return UnimplementedError("GetFinalizer is not implemented for type " +
-                              GetName());
-  };
+  std::cerr << "GetFinalizer is not implemented for type " << GetName();
+  return Finalizer();
 }
 
 }  // namespace llama
