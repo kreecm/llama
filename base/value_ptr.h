@@ -1,6 +1,9 @@
 #ifndef LLAMA_VALUE_PTR_H
 #define LLAMA_VALUE_PTR_H
 
+#include <type_traits>
+
+#include "base/value.h"
 #include "base/value_base.h"
 
 namespace llama {
@@ -11,14 +14,13 @@ class ValuePtr : public ValueBase {
  public:
   ValuePtr() : m_ptr(nullptr) {}
 
-  ValuePtr(const ValueBase* value)
-      : ValueBase(value->GetType()),
-        m_ptr(value->GeDataPtr()) {}
+  explicit ValuePtr(const ValueBase* value)
+      : ValueBase(value->GetType()), m_ptr(value->GetDataPtr()) {}
 
-  template <class T>
-  ValuePtr(const T* value)
-      : ValueBase(TypeOf<T>())
-        m_ptr(reinterpret_cast<const void*>(value)) {}
+  template <class T, typename = typename std::enable_if<
+                         !std::is_base_of<ValueBase, T>::value>::type>
+  explicit ValuePtr(const T* value)
+      : ValueBase(TypeOf<T>()), m_ptr(reinterpret_cast<const void*>(value)) {}
 
   ValuePtr(const MutableValuePtr& mutable_ptr);
 
@@ -32,14 +34,13 @@ class MutableValuePtr : public MutableValueBase {
  public:
   MutableValuePtr() : m_ptr(nullptr) {}
 
-  MutableValuePtr(Value* value)
-      : MutableValueBase(value->GetType()),
-        m_ptr(value->GeDataPtr()) {}
+  explicit MutableValuePtr(MutableValueBase* value)
+      : MutableValueBase(value->GetType()), m_ptr(value->GetMutableDataPtr()) {}
 
-  template <class T>
-  MutableValuePtr(T* value)
-      : MutableValueBase(TypeOf<T>())
-        m_ptr(reinterpret_cast<void*>(value)) {}
+  template <class T, typename = typename std::enable_if<
+                         !std::is_base_of<ValueBase, T>::value>::type>
+  explicit MutableValuePtr(T* value)
+      : MutableValueBase(TypeOf<T>()), m_ptr(reinterpret_cast<void*>(value)) {}
 
   const void* GetDataPtr() const final { return m_ptr; }
 

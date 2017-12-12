@@ -14,7 +14,7 @@ void ExpectErrorCodeName(const std::string &code_name,
 
 TEST(ErrorCodeTest, TestErrorCodes) {
   const auto &codes = GetErrorCodes();
-  EXPECT_EQ(3, codes.size());
+  EXPECT_EQ(4, codes.size());
   EXPECT_EQ(kSuccess, codes[0]);
   EXPECT_EQ(kErrorUnknown, codes[1]);
   EXPECT_EQ(kErrorFailedPrecondition, codes[2]);
