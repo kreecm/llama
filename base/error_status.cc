@@ -21,4 +21,9 @@ ErrorStatus FailedPrecondtionError(const std::string& message) {
   return ErrorStatus(kErrorFailedPrecondition, message);
 }
 
+
+ErrorStatus UnimplementedError(const std::string& message) {
+  return ErrorStatus(kErrorUnimplemented, message);
+}
+
 }  // namespace llama

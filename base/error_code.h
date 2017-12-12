@@ -11,6 +11,7 @@ enum ErrorCode {
   kSuccess = 0,
   kErrorUnknown,
   kErrorFailedPrecondition,
+  kErrorUnimplemented,
 };
 
 const std::vector<ErrorCode>& GetErrorCodes();

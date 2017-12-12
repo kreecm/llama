@@ -52,6 +52,23 @@ std::uint32_t NumericType::Encode(ScalarType scalar, std::uint8_t bit_depth,
   return code;
 };
 
+size_t NumericType::GetSize(std::uint32_t code) {
+  std::uint8_t rank = GetRank(code);
+  std::size_t scalar_size = GetBitDepth(code) / 8;
+
+  if (rank == 0) {
+    return scalar_size;
+  } else if (rank == 1) {
+    std::uint8_t dim = GetRowDim(code);
+    return scalar_size * dim;
+  } else if (rank == 2) {
+    std::uint8_t row_dim = GetRowDim(code);
+    std::uint8_t col_dim = GetColDim(code);
+    return scalar_size * row_dim * col_dim;
+  }
+  return 0;
+}
+
 std::string NumericType::GetName(std::uint32_t code) {
   ScalarType scalar = GetScalarType(code);
   std::uint8_t rank = GetRank(code);

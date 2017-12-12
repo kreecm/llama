@@ -51,6 +51,8 @@ cc_library(
     name = "value",
     hdrs = [
         "value.h",
+        "value_base.h",
+        "value_ptr.h",
     ],
     srcs = [
         "value.cc",
@@ -99,6 +101,26 @@ cc_test(
     srcs = ["numeric_type_test.cc"],
     deps = [
         ":type",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "value_test",
+    srcs = ["value_test.cc"],
+    deps = [
+        ":value",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "value_ptr_test",
+    srcs = ["value_ptr_test.cc"],
+    deps = [
+        ":value",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

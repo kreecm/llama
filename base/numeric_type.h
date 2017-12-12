@@ -42,6 +42,8 @@ class NumericType {
     return (code & kMaskColDim) >> kShiftColDim;
   }
 
+  static size_t GetSize(std::uint32_t code);
+
   static std::string GetName(std::uint32_t code);
 
  private:

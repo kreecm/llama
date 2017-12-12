@@ -40,6 +40,7 @@ class ErrorStatus {
 ErrorStatus Success();
 ErrorStatus UnknownError(const std::string& message);
 ErrorStatus FailedPrecondtionError(const std::string& message);
+ErrorStatus UnimplementedError(const std::string& message);
 
 }  // namespace llama
 

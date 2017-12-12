@@ -33,6 +33,10 @@ class Type {
     kTypeCustom = 8
   };
 
+  using Initializer = std::function<ErrorStatus (void*)>;
+  using Copier = std::function<ErrorStatus (const void*, void*)>;
+  using Mover = std::function<ErrorStatus (void*, void*)>;
+  using Finalizer = std::function<ErrorStatus (void*)>;
   using ScalarType = NumericType::ScalarType;
 
   // Static contructors for numeric types.
@@ -58,15 +62,29 @@ class Type {
 
   static Type Matrix(Type scalar, std::uint8_t row_dim, std::uint8_t col_dim);
 
+  // Constructors.
+  // =====================================================================
+  Type() : m_code(0) {}
+
   // Accessors for all types.
   // =====================================================================
+  bool IsDefined() const { return GetCategory() != kTypeUndefined; }
+
   Category GetCategory() const {
     return static_cast<Category>(m_code & kMaskCategory);
   }
 
-  bool IsDefined() const { return GetCategory() != kTypeUndefined; }
+  size_t GetSize() const;
 
   std::string GetName() const;
+
+  Initializer GetInitializer() const;
+
+  Copier GetCopier() const;
+
+  Mover GetMover() const;
+
+  Finalizer GetFinalizer() const;
 
   // Accessors for numeric types.
   // =====================================================================
@@ -86,6 +104,8 @@ class Type {
     return NumericType::GetBitDepth(m_code);
   }
 
+  bool operator== (const Type& other) const { return m_code == other.m_code; }
+
  private:
   static constexpr std::uint32_t kMaskCategory = 0xf;
 
@@ -93,6 +113,7 @@ class Type {
 
   std::uint32_t m_code;
 };
+
 
 template <typename T>
 Type TypeOf();
