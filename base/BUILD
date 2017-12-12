@@ -56,7 +56,6 @@ cc_library(
     ],
     srcs = [
         "value.cc",
-        "value_base.cc",
     ],
     deps = [
     	":type",

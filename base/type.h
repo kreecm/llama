@@ -62,6 +62,10 @@ class Type {
 
   static Type Matrix(Type scalar, std::uint8_t row_dim, std::uint8_t col_dim);
 
+  // Constructors.
+  // =====================================================================
+  Type() : m_code(0) {}
+
   // Accessors for all types.
   // =====================================================================
   bool IsDefined() const { return GetCategory() != kTypeUndefined; }

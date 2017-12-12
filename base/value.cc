@@ -2,9 +2,9 @@
 
 namespace llama {
 
-constexpr size_t Value::kInPlaceValueSize = sizeof(std::string);
+constexpr size_t Value::kInPlaceValueSize;
 
-const void* Value::GetDataPtr() const final {
+const void* Value::GetDataPtr() const {
   if (IsInPlace()) {
     return reinterpret_cast<const void*>(m_data.in_place);
   } else {
@@ -12,7 +12,7 @@ const void* Value::GetDataPtr() const final {
   }
 }
 
-void* Value::GetMutableDataPtr() final {
+void* Value::GetMutableDataPtr() {
   if (IsInPlace()) {
     return reinterpret_cast<void*>(m_data.in_place);
   } else {

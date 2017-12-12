@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cstring>
 
 #include "base/type.h"
 
@@ -76,6 +77,63 @@ Type::Initializer Type::GetInitializer() const {
     case kTypeUndefined:
     case kTypeNumeric:
       return [](void* mem) { return Success(); };
+    case kTypeString:
+      break;
+    case kTypeEnum:
+      break;
+    case kTypeTuple:
+      break;
+    case kTypeArray:
+      break;
+    case kTypeDictionary:
+      break;
+    case kTypeBuffer:
+      break;
+    case kTypeCustom:
+      break;
+  }
+  return [this](void* mem) {
+    return UnimplementedError("GetInitializer is not implemented for type " +
+                              GetName());
+  };
+}
+
+Type::Copier Type::GetCopier() const {
+  switch (GetCategory()) {
+    case kTypeUndefined:
+    case kTypeNumeric:
+      return [](const void* src, void* dst) {
+        std::memcpy(dst, src, GetSize());
+        return Success();
+      };
+    case kTypeString:
+      break;
+    case kTypeEnum:
+      break;
+    case kTypeTuple:
+      break;
+    case kTypeArray:
+      break;
+    case kTypeDictionary:
+      break;
+    case kTypeBuffer:
+      break;
+    case kTypeCustom:
+      break;
+  }
+  return [this](void* mem) {
+    return UnimplementedError("GetInitializer is not implemented for type " +
+                              GetName());
+  };
+}
+
+Type::Mover Type::GetMover() const {
+  switch (GetCategory()) {
+    case kTypeUndefined:
+    case kTypeNumeric:
+      return [](void* src, void* dst) {
+        return Success();
+      };
     case kTypeString:
       break;
     case kTypeEnum:

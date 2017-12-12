@@ -14,6 +14,8 @@ class ValueBase {
 
   ValueBase(Type type) : m_type(type) {}
 
+  virtual ~ValueBase() {}
+
   Type GetType() const { return m_type; }
 
   virtual const void* GetDataPtr() const = 0;
@@ -26,7 +28,7 @@ class ValueBase {
     return *reinterpret_cast<const T*>(this->GetDataPtr());
   }
 
- private:
+ protected:
   Type m_type;
 };
 
@@ -39,11 +41,11 @@ class MutableValueBase : public ValueBase {
   virtual void* GetMutableDataPtr() = 0;
 
   template <class T>
-  typename T* GetMutable() {
+  T* GetMutable() {
     Assert(TypeOf<T>() == m_type,
            "Attempting to access value data as " + TypeName<T>() +
                ", but value holds data of type " + m_type.GetName());
-    return reinterpret_cast<T*>(this->GetDataPtr());
+    return reinterpret_cast<T*>(this->GetMutableDataPtr());
   }
 };
 

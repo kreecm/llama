@@ -9,9 +9,9 @@
 
 namespace llama {
 
-class Value : public MutablValueBase {
+class Value : public MutableValueBase {
  public:
-  static constexpr size_t kInPlaceValueSize;
+  static constexpr size_t kInPlaceValueSize = sizeof(std::string);
 
   // Construct an invalid value.
   Value() {}
@@ -19,24 +19,20 @@ class Value : public MutablValueBase {
   // Construct a value of type t.
   Value(Type t) : MutableValueBase(t) { Initialize(); }
 
-  template <class T>
-  Value() : Value(TypeOf<T>()) {}
-
   // Move constructor.
-  Value(Value&& value) : Value(value.GetType()) { Move(value); }
-
+  Value(Value&& value) : Value(value.GetType()) { Move(std::move(value)); }
 
   // Copy constructor.
   Value(const Value& value) : Value(value.GetType()) { Copy(value); }
 
-  ~Value() { Delete(); }
+  ~Value() final { Delete(); }
 
   const void* GetDataPtr() const final;
 
   void* GetMutableDataPtr() final;
 
   Value& operator= (Value&& value) {
-    Move(value);
+    Move(std::move(value));
     return *this;
   }
 
